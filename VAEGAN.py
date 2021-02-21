@@ -139,6 +139,7 @@ columns = 64
 channel = 3
 epochs = 20000
 datasize = len(dataset)
+np.random.seed(0)
 noise = np.random.normal(0, 1, (batch_size, 256))
 # optimizers
 SGDop = SGD(lr=0.0003)
@@ -167,7 +168,7 @@ E_mean, E_logsigma, Z = E(X)
 # Z2 = Input(shape=(batch_size, 512))
 
 output = G(Z)
-G_dec = G(E_mean + E_logsigma)
+G_dec = G(E_mean + K.exp(E_logsigma / 2) * noise)
 D_fake, F_fake = D(output)
 D_fromGen, F_fromGen = D(G_dec)
 D_true, F_true = D(X)
@@ -193,8 +194,8 @@ for epoch in range(epochs):
         cnt = cnt - 4
 
     if cnt == 0:
-        GlossEnc = G.train_on_batch(latent_vect, np.ones((batch_size, 1)))
-        GlossGen = G.train_on_batch(noise, np.ones((batch_size, 1)))
+        #GlossEnc = G.train_on_batch(latent_vect, np.ones((batch_size, 1)))
+        #GlossGen = G.train_on_batch(noise, np.ones((batch_size, 1)))
         Eloss = VAE.train_on_batch(dataset, None)
 
     chk = epoch
@@ -210,7 +211,7 @@ for epoch in range(epochs):
     print("epoch number", epoch + 1)
     print("loss:")
     print("D:", DlossTrue, DlossEnc, DlossFake)
-    print("G:", GlossEnc, GlossGen)
+    #print("G:", GlossEnc, GlossGen)
     print("VAE:", Eloss)
 
 print('Training done,saving weights')
