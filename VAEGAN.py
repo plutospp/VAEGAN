@@ -168,7 +168,7 @@ E_mean, E_logsigma, Z = E(X)
 # Z2 = Input(shape=(batch_size, 512))
 
 output = G(Z)
-G_dec = G(E_mean + K.exp(E_logsigma / 2) * noise)
+G_dec = G(E_mean + K.exp(E_logsigma / 2) * K.constant(noise))
 D_fake, F_fake = D(output)
 D_fromGen, F_fromGen = D(G_dec)
 D_true, F_true = D(X)
